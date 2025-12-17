@@ -3,6 +3,10 @@
 
 ---
 
+[點我下載 mkspiffs_espressif32_arduino_macos_arm64](./mkspiffs_espressif32_arduino_macos_arm64)
+[Download Here mkspiffs_espressif32_arduino_macos_arm64](./mkspiffs_espressif32_arduino_macos_arm64)
+
+
 ## 簡介 | Introduction
 
 提供可直接在 Apple Silicon macOS 上運作的 mkspiffs 預編譯二進位檔案，方便 PlatformIO 使用 ESP32 的用戶，解決「Bad CPU type in executable」錯誤。
