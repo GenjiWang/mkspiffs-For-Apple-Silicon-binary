@@ -25,6 +25,9 @@ RED='\033[0;31m'
 GREEN='\033[0;32m'
 NC='\033[0m' # No Color
 
+# Get the directory where this script is located
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+
 # Create a temporary build directory
 BUILD_DIR="$(mktemp -d)"
 echo "Build directory: $BUILD_DIR"
@@ -75,7 +78,7 @@ echo "Testing binary..."
 ./mkspiffs --version
 
 # Copy to output directory
-OUTPUT_DIR="${OLDPWD:-$(dirname "$0")}"
+OUTPUT_DIR="$SCRIPT_DIR"
 OUTPUT_FILE="$OUTPUT_DIR/mkspiffs_for_Apple_Silicon"
 
 echo ""

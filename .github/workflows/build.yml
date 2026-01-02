@@ -12,6 +12,9 @@ on:
         required: false
         default: 'false'
 
+permissions:
+  contents: read
+
 jobs:
   build:
     runs-on: macos-14  # This uses Apple Silicon (M1) runners
@@ -68,5 +71,6 @@ jobs:
         
     - name: Update repository binary
       run: |
+        mkdir -p mkspiffs_espressif32_arduino_macos_arm64
         cp mkspiffs-src/mkspiffs mkspiffs_espressif32_arduino_macos_arm64/mkspiffs_for_Apple_Silicon
         chmod +x mkspiffs_espressif32_arduino_macos_arm64/mkspiffs_for_Apple_Silicon
