@@ -1,6 +1,8 @@
 # mkspiffs for Apple Silicon (macOS ARM64) 執行檔
 # mkspiffs Prebuilt Binary for Apple Silicon (macOS ARM64)
 
+[![Build mkspiffs for Apple Silicon](https://github.com/GenjiWang/mkspiffs-For-Apple-Silicon-binary/actions/workflows/build.yml/badge.svg)](https://github.com/GenjiWang/mkspiffs-For-Apple-Silicon-binary/actions/workflows/build.yml)
+
 ---
 
 [點我下載 mkspiffs_espressif32_arduino_macos_arm64](./mkspiffs_espressif32_arduino_macos_arm64)
@@ -54,6 +56,54 @@ This repository provides a prebuilt mkspiffs binary that works on Apple Silicon 
 如果有任何問題，歡迎在本 repo 提出 issue，或補充建議、心得，讓更多人受惠！
 
 If you have any problems or suggestions, feel free to open an issue or contribute to this repo.
+
+---
+
+## 自行編譯 | Build It Yourself
+
+如果你想要自行編譯 mkspiffs，可以使用本 repo 提供的 build script：
+
+If you want to build mkspiffs yourself, you can use the build script provided in this repository:
+
+```bash
+# Clone this repository
+git clone https://github.com/GenjiWang/mkspiffs-For-Apple-Silicon-binary.git
+cd mkspiffs-For-Apple-Silicon-binary
+
+# Run the build script
+./build.sh
+```
+
+或者手動編譯：
+
+Or build manually:
+
+```bash
+# Clone mkspiffs repository
+git clone --recursive https://github.com/igrr/mkspiffs.git
+cd mkspiffs
+
+# Build for Apple Silicon (arm64)
+make TARGET_OS=osx \
+    TARGET_CFLAGS="-mmacosx-version-min=11.0 -arch arm64" \
+    TARGET_CXXFLAGS="-mmacosx-version-min=11.0 -arch arm64 -stdlib=libc++" \
+    TARGET_LDFLAGS="-mmacosx-version-min=11.0 -arch arm64 -stdlib=libc++"
+```
+
+### 為什麼直接編譯無法使用？ | Why Direct Compilation Doesn't Work?
+
+原版 mkspiffs 的 Makefile 將 macOS 編譯設定為 `i386` 和 `x86_64` 架構：
+
+The original mkspiffs Makefile sets macOS build to `i386` and `x86_64` architectures:
+
+```makefile
+ifeq ($(TARGET_OS),osx)
+    TARGET_CFLAGS   = -mmacosx-version-min=10.7 -arch i386 -arch x86_64
+```
+
+這會導致在 Apple Silicon 上執行時出現「Bad CPU type in executable」錯誤。本 repo 提供的編譯設定會改為 `arm64` 架構。
+
+This causes "Bad CPU type in executable" error when running on Apple Silicon. The build configuration in this repo changes to `arm64` architecture.
 
 ---
 
