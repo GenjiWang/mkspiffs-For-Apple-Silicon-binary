@@ -5,10 +5,6 @@
 
 ---
 
-[點我下載 mkspiffs_espressif32_arduino_macos_arm64](./mkspiffs_espressif32_arduino_macos_arm64)
-
-[Download Here mkspiffs_espressif32_arduino_macos_arm64](./mkspiffs_espressif32_arduino_macos_arm64)
-
 
 ## 簡介 | Introduction
 
