@@ -1,0 +1,78 @@
+name: Build mkspiffs for Apple Silicon
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+    inputs:
+      create_release:
+        description: 'Create a release with the built binary'
+        required: false
+        default: 'false'
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: macos-14  # This uses Apple Silicon (M1) runners
+    
+    steps:
+    - name: Checkout this repository
+      uses: actions/checkout@v4
+      
+    - name: Clone mkspiffs source
+      run: |
+        git clone --recursive https://github.com/igrr/mkspiffs.git mkspiffs-src
+        
+    - name: Get mkspiffs version
+      id: version
+      run: |
+        cd mkspiffs-src
+        VERSION=$(git describe --always)
+        echo "version=$VERSION" >> $GITHUB_OUTPUT
+        echo "Building mkspiffs version: $VERSION"
+        
+    - name: Build for Apple Silicon (arm64)
+      run: |
+        cd mkspiffs-src
+        # Build with Arduino ESP32 configuration (SPIFFS_OBJ_META_LEN=4)
+        # This matches PlatformIO's expected SPIFFS format for ESP32 Arduino
+        make clean || true
+        make dist BUILD_CONFIG_NAME="-arduino-esp32" \
+          CPPFLAGS="-DSPIFFS_OBJ_META_LEN=4" \
+          TARGET_CFLAGS="-mmacosx-version-min=11.0 -arch arm64" \
+          TARGET_CXXFLAGS="-mmacosx-version-min=11.0 -arch arm64 -stdlib=libc++" \
+          TARGET_LDFLAGS="-mmacosx-version-min=11.0 -arch arm64 -stdlib=libc++"
+          
+    - name: Verify binary architecture
+      run: |
+        cd mkspiffs-src
+        file mkspiffs
+        # Verify it's an arm64 binary
+        file mkspiffs | grep -q "arm64" || (echo "Error: Binary is not arm64" && exit 1)
+        
+    - name: Test mkspiffs binary
+      run: |
+        cd mkspiffs-src
+        ./mkspiffs --version
+        
+    - name: Prepare binary for distribution
+      run: |
+        mkdir -p dist
+        cp mkspiffs-src/mkspiffs dist/mkspiffs_espressif32_arduino
+        chmod +x dist/mkspiffs_espressif32_arduino
+        
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: mkspiffs-macos-arm64-${{ steps.version.outputs.version }}
+        path: dist/mkspiffs_espressif32_arduino
+        
+    - name: Update repository binary
+      run: |
+        mkdir -p mkspiffs_espressif32_arduino_macos_arm64
+        cp mkspiffs-src/mkspiffs mkspiffs_espressif32_arduino_macos_arm64/mkspiffs_for_Apple_Silicon
+        chmod +x mkspiffs_espressif32_arduino_macos_arm64/mkspiffs_for_Apple_Silicon
