@@ -38,9 +38,11 @@ jobs:
     - name: Build for Apple Silicon (arm64)
       run: |
         cd mkspiffs-src
-        # Override the TARGET_CFLAGS and TARGET_CXXFLAGS for arm64
+        # Build with Arduino ESP32 configuration (SPIFFS_OBJ_META_LEN=4)
+        # This matches PlatformIO's expected SPIFFS format for ESP32 Arduino
         make clean || true
-        make TARGET_OS=osx \
+        make dist BUILD_CONFIG_NAME="-arduino-esp32" \
+          CPPFLAGS="-DSPIFFS_OBJ_META_LEN=4" \
           TARGET_CFLAGS="-mmacosx-version-min=11.0 -arch arm64" \
           TARGET_CXXFLAGS="-mmacosx-version-min=11.0 -arch arm64 -stdlib=libc++" \
           TARGET_LDFLAGS="-mmacosx-version-min=11.0 -arch arm64 -stdlib=libc++"

@@ -52,10 +52,12 @@ VERSION=$(git describe --always)
 echo "Building mkspiffs version: $VERSION"
 echo ""
 
-# Build for arm64 (Apple Silicon)
-echo "Building for arm64 (Apple Silicon)..."
+# Build for arm64 (Apple Silicon) with Arduino ESP32 configuration
+# IMPORTANT: SPIFFS_OBJ_META_LEN=4 is required for compatibility with ESP32 Arduino
+echo "Building for arm64 (Apple Silicon) with Arduino ESP32 configuration..."
 make clean 2>/dev/null || true
-make TARGET_OS=osx \
+make dist BUILD_CONFIG_NAME="-arduino-esp32" \
+    CPPFLAGS="-DSPIFFS_OBJ_META_LEN=4" \
     TARGET_CFLAGS="-mmacosx-version-min=11.0 -arch arm64" \
     TARGET_CXXFLAGS="-mmacosx-version-min=11.0 -arch arm64 -stdlib=libc++" \
     TARGET_LDFLAGS="-mmacosx-version-min=11.0 -arch arm64 -stdlib=libc++"
